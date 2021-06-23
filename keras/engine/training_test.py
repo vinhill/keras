@@ -49,6 +49,25 @@ except ImportError:
 
 class TrainingTest(keras_parameterized.TestCase):
 
+  def test_init_type_error(self):
+
+    class MyModel(training_module.Model):
+
+      @tf.function
+      def train_step(self, data):
+        return 0
+
+      def test_step(self, data):
+        return 0
+
+      def predict_step(self, data):
+        return 0
+
+    inputs = layers_module.Input(shape=(1,), name='my_input')
+    outputs = layers_module.Dense(1)(inputs)
+    with self.assertRaisesRegex(TypeError, 'Train step is of wrong type'):
+      MyModel(inputs, outputs)
+
   @keras_parameterized.run_all_keras_modes
   @keras_parameterized.run_with_all_model_types
   def test_model_instrumentation(self):

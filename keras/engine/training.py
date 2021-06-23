@@ -243,6 +243,9 @@ class Model(base_layer.Layer, version_utils.ModelVersionSelector):
     generic_utils.validate_kwargs(kwargs, {
         'trainable', 'dtype', 'dynamic', 'name', 'autocast', 'inputs', 'outputs'
     })
+
+    if isinstance(self.train_step, tf.__internal__.function.Function):
+      raise TypeError('Train step is of wrong type')
     super(Model, self).__init__(**kwargs)
     # By default, Model is a subclass model, which is not in graph network.
     self._is_graph_network = False
